@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Avance DR - Capa Media - Seguros Bolivar</title>
+  <title>Avance Capa Media - Seguros Bolivar</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -52,14 +52,17 @@
     }
     .note {
       margin-top: 10px;
+      padding: 8px;
+      border-left: 3px solid #3498db;
+      background: #f9f9f9;
       font-style: italic;
-      color: #555;
+      color: #333;
       white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
-  <h1>Avance DR - Capa Media - Seguros Bolivar</h1>
+  <h1>Avance Capa Media - Seguros Bolivar</h1>
 
   <div id="servers"></div>
 
@@ -74,13 +77,12 @@
   <script>
     async function loadData() {
       try {
-        // 🔥 se agrega nocache para evitar cache viejo en GitHub Pages
         const response = await fetch("data.json?nocache=" + new Date().getTime());
         const servers = await response.json();
         renderServers(servers);
       } catch (e) {
         document.getElementById("servers").innerHTML =
-          "<p style='color:red;'>Error cargando datos. Asegúrate de que el archivo data.json existe en el repositorio.</p>";
+          "<p style='color:red;'>⚠️ Error cargando datos. Asegúrate de que el archivo data.json existe en el repositorio.</p>";
       }
     }
 
@@ -101,7 +103,8 @@
           <h2>${server.name}</h2>
           <p>Avance (Capa media): <b>${percent}%</b></p>
           <progress value="${percent}" max="100" class="${getClass(percent)}"></progress>
-          ${server.note ? `<div class="note">📝 ${server.note}</div>` : ""}
+          <h3>Observaciones</h3>
+          <div class="note">${server.note ? server.note : "Sin observaciones."}</div>
         `;
 
         serversDiv.appendChild(div);
