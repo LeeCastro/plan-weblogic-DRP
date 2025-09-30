@@ -1,0 +1,8 @@
+# Ignorar todo por defecto
+*
+
+# No ignorar estos archivos clave
+!index.html
+!plan_trabajo.html
+!data.json
+!.gitignore
