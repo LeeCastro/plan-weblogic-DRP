@@ -1,6 +1,6 @@
 [
   {
-    "name": "IAS02SBCC09",
+    "name": "IAS01SBCC09",
     "checks": [
       true,
       true,
@@ -30,39 +30,6 @@
       false
     ],
     "progress": 83,
-    "note": ""
-  },
-  {
-    "name": "AP105SBCC09",
-    "checks": [
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false
-    ],
-    "progress": 26,
     "note": ""
   },
   {
@@ -99,7 +66,40 @@
     "note": ""
   },
   {
-    "name": "IAS01SBCC09",
+    "name": "AP105SBCC09",
+    "checks": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false
+    ],
+    "progress": 83,
+    "note": ""
+  },
+  {
+    "name": "IAS02SBCC09",
     "checks": [
       true,
       true,
