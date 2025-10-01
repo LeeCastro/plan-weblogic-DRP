@@ -68,11 +68,11 @@
   {
     "name": "AP52SBCC09",
     "checks": [
+      true,
       false,
+      true,
       false,
-      false,
-      false,
-      false,
+      true,
       true,
       true,
       true,
@@ -95,7 +95,7 @@
       false,
       false
     ],
-    "progress": 78,
+    "progress": 91,
     "note": "En esta máquina se encuentran las siguientes novedades:\n\nDR: Grupo principal: oinstall (GID: 54321) - PRD: Grupo principal: oinstall (GID: 1004) el GID es distinto podría generar errores de permisos o inconsistencias de replicación. \nFaltan las librerías libaio-devel y libnsl.\nNo cuenta con el disco /siebel/ses/\nLas versiones de JDK son distintas.\nDR: openjdk version \"11.0.22\"                                                            PRD: openjdk version \"1.8.0_452\"\nDR: OpenJDK Runtime Environment (Red_Hat-11.0.22.0.7-2.0.1)    PRD: OpenJDK Runtime Environment (build 1.8.0_452-b09)\nDR: OpenJDK 64-Bit Server VM (Red_Hat-11.0.22.0.7-2.0.1)           PRD: OpenJDK 64-Bit Server VM (build 25.452-b09, mixed mode)"
   },
   {
