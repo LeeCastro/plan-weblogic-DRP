@@ -6,9 +6,9 @@
         "name": "AP19SBCC09",
         "checks": [
           true,
-          false,
           true,
-          false,
+          true,
+          true,
           true,
           false,
           false,
@@ -32,16 +32,16 @@
           false,
           false
         ],
-        "progress": 13,
-        "note": "Se validan los prerrequisitos y se encuentran las siguientes novedades.\n\nNo cuenta con las siguientes librerías.\ngcc, gcc-c++, glibc-devel, libaio-devel, libstdc++-devel, libnsl, sysstat, motif, motif-devel, redhat-lsb-core, make.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
+        "progress": 22,
+        "note": "Se valida nuevamente los prerrequisitos y se acepta las máquinas ya que se instalaron las librerías necesarias.\n\nSe procederá con el cargue de instaladores para posteriormente ejecutar la instalación.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
       },
       {
         "name": "AP18SBCC09",
         "checks": [
           true,
-          false,
           true,
-          false,
+          true,
+          true,
           true,
           false,
           false,
@@ -65,16 +65,16 @@
           false,
           false
         ],
-        "progress": 13,
-        "note": "Se validan los prerrequisitos y se encuentran las siguientes novedades.\n\nNo cuenta con las siguientes librerías.\ngcc, gcc-c++, glibc-devel, libaio-devel, libstdc++-devel, libnsl, sysstat, motif, motif-devel, redhat-lsb-core, make.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
+        "progress": 22,
+        "note": "Se valida nuevamente los prerrequisitos y se acepta las máquinas ya que se instalaron las librerías necesarias.\n\nSe procederá con el cargue de instaladores para posteriormente ejecutar la instalación.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
       },
       {
         "name": "AP17SBCC09",
         "checks": [
           true,
-          false,
           true,
-          false,
+          true,
+          true,
           true,
           false,
           false,
@@ -98,8 +98,8 @@
           false,
           false
         ],
-        "progress": 13,
-        "note": "Se validan los prerrequisitos y se encuentran las siguientes novedades.\n\nNo cuenta con las siguientes librerías.\ngcc, gcc-c++, glibc-devel, libaio-devel, libstdc++-devel, libnsl, sysstat, motif, motif-devel, redhat-lsb-core, make.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
+        "progress": 22,
+        "note": "Se valida nuevamente los prerrequisitos y se acepta las máquinas ya que se instalaron las librerías necesarias.\n\nSe procederá con el cargue de instaladores para posteriormente ejecutar la instalación.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
       }
     ]
   },
@@ -346,7 +346,7 @@
         "name": "AP28SBCC09",
         "checks": [
           true,
-          false,
+          true,
           true,
           true,
           true,
@@ -372,14 +372,14 @@
           false,
           false
         ],
-        "progress": 22,
-        "note": "Se validan los prerrequisitos de las máquinas donde se observa que faltan los discos NFS.\n\n  NFS:/terceros                   nfs4      150G   /u/home/terceros\n  NFS:/pcapi                       nfs4      150G   /u/home/pcapi\n  NFS:/pprest                      nfs4      150G   /u/home/pprest\n\nActualmente se están cargando los instaladores, cargue que va al 60% por el tamaño de los paquetes."
+        "progress": 26,
+        "note": "Se validan los prerrequisitos de las máquinas donde se observa que faltan los discos NFS.\n\n  NFS:/terceros                   nfs4      150G   /u/home/terceros\n  NFS:/pcapi                       nfs4      150G   /u/home/pcapi\n  NFS:/pprest                      nfs4      150G   /u/home/pprest\n\nActualmente se están cargando los instaladores, cargue que va al 100% por el tamaño de los paquetes."
       },
       {
         "name": "AP27SBCC09",
         "checks": [
           true,
-          false,
+          true,
           true,
           true,
           true,
@@ -405,8 +405,8 @@
           false,
           false
         ],
-        "progress": 22,
-        "note": "Se validan los prerrequisitos de las máquinas donde se observa que faltan los discos NFS.\n\n  NFS:/terceros                   nfs4      150G   /u/home/terceros\n  NFS:/pcapi                       nfs4      150G   /u/home/pcapi\n  NFS:/pprest                      nfs4      150G   /u/home/pprest\n\nActualmente se están cargando los instaladores, cargue que va al 60% por el tamaño de los paquetes."
+        "progress": 26,
+        "note": "Se validan los prerrequisitos de las máquinas donde se observa que faltan los discos NFS.\n\n  NFS:/terceros                   nfs4      150G   /u/home/terceros\n  NFS:/pcapi                       nfs4      150G   /u/home/pcapi\n  NFS:/pprest                      nfs4      150G   /u/home/pprest\n\nActualmente se están cargando los instaladores, cargue que va al 100% por el tamaño de los paquetes."
       }
     ]
   },
