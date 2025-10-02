@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Plan de Trabajo por Servidor</title>
+  <title>Plan de Trabajo por Aplicación</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,18 +13,30 @@
       text-align: center;
       color: #2c3e50;
     }
+    .app {
+      background: #ecf0f1;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .app h2 {
+      margin-top: 0;
+      color: #1a5276;
+    }
     .server {
       background: #fff;
       border-radius: 8px;
       padding: 15px;
-      margin-bottom: 20px;
+      margin: 15px 0;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .server h2 {
+    .server h3 {
       margin-top: 0;
+      color: #34495e;
     }
-    h3 {
-      margin: 15px 0 8px;
+    h4 {
+      margin: 10px 0 5px;
       color: #34495e;
       border-bottom: 1px solid #ddd;
       padding-bottom: 3px;
@@ -89,10 +101,10 @@
 <body>
   <h1>Plan de Trabajo - WebLogic - Seguros Bolivar</h1>
 
-  <button class="btn" onclick="addServer()">➕ Agregar Servidor</button>
+  <button class="btn" onclick="addApp()">➕ Agregar Aplicación</button>
   <button class="btn" onclick="exportData()">💾 Exportar Avance</button>
 
-  <div id="servers"></div>
+  <div id="apps"></div>
 
   <div class="total-progress">
     <h2>Avance Total</h2>
@@ -140,20 +152,34 @@
 
     const groupsToCount = ["Prerrequisitos", "WebLogic Instalación y Configuración"];
 
-    function addServer(name = "", checks = [], note = "") {
-      const serversDiv = document.getElementById('servers');
-      const serverIndex = document.querySelectorAll('.server').length;
+    function addApp(name = "Nueva Aplicación") {
+      const appsDiv = document.getElementById('apps');
+      const appDiv = document.createElement('div');
+      appDiv.className = 'app';
+
+      appDiv.innerHTML = `
+        <h2>Aplicación: <input type="text" value="${name}" placeholder="Nombre de la aplicación"></h2>
+        <button class="btn" onclick="addServer(this)">➕ Agregar Servidor</button>
+        <div class="servers"></div>
+        <h3>Avance de la Aplicación: <span class="app-progress-text">0%</span></h3>
+        <progress value="0" max="100" class="app-progress"></progress>
+      `;
+
+      appsDiv.appendChild(appDiv);
+    }
+
+    function addServer(button, name = "", checks = [], note = "") {
+      const serversDiv = button.parentElement.querySelector('.servers');
       const serverDiv = document.createElement('div');
       serverDiv.className = 'server';
-      serverDiv.dataset.index = serverIndex;
 
       let html = `
-        <h2>Servidor: <input type="text" placeholder="Nombre del servidor" value="${name}"></h2>
+        <h3>Servidor: <input type="text" placeholder="Nombre del servidor" value="${name}"></h3>
         <form>`;
 
       let i = 0;
       for (const [group, tasks] of Object.entries(taskGroups)) {
-        html += `<h3>${group}</h3>`;
+        html += `<h4>${group}</h4>`;
         tasks.forEach(task => {
           const checked = checks[i] ? "checked" : "";
           const countable = groupsToCount.includes(group) ? "data-countable='true'" : "data-countable='false'";
@@ -165,16 +191,11 @@
       html += `</form>
         <p>Avance (Capa media): <span class="progress-text">0%</span></p>
         <progress value="0" max="100"></progress>
-        <h3>Observaciones</h3>
+        <h4>Observaciones</h4>
         <textarea placeholder="Escribe aquí notas u observaciones...">${note}</textarea>`;
       serverDiv.innerHTML = html;
 
-      // 👉 Nuevo: insertar al inicio
-      if (serversDiv.firstChild) {
-        serversDiv.insertBefore(serverDiv, serversDiv.firstChild);
-      } else {
-        serversDiv.appendChild(serverDiv);
-      }
+      serversDiv.appendChild(serverDiv);
 
       serverDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => updateProgress(serverDiv));
@@ -195,8 +216,24 @@
       progressBar.value = percent;
       setProgressColor(progressBar, percent);
 
+      updateAppProgress(serverDiv.closest('.app'));
       updateTotalProgress();
       saveState();
+    }
+
+    function updateAppProgress(appDiv) {
+      const servers = appDiv.querySelectorAll('.server');
+      let total = 0, count = 0;
+      servers.forEach(server => {
+        const percent = parseInt(server.querySelector('.progress-text').textContent);
+        total += percent;
+        count++;
+      });
+      const avg = count ? Math.round(total / count) : 0;
+      appDiv.querySelector('.app-progress-text').textContent = avg + "%";
+      const appBar = appDiv.querySelector('.app-progress');
+      appBar.value = avg;
+      setProgressColor(appBar, avg);
     }
 
     function updateTotalProgress() {
@@ -242,13 +279,19 @@
 
     function saveState() {
       const data = [];
-      document.querySelectorAll('.server').forEach(server => {
-        const serverData = {
-          name: server.querySelector('input[type="text"]').value,
-          checks: Array.from(server.querySelectorAll('input[type="checkbox"]')).map(c => c.checked),
-          note: server.querySelector('textarea').value
+      document.querySelectorAll('.app').forEach(app => {
+        const appData = {
+          name: app.querySelector('input[type="text"]').value,
+          servers: []
         };
-        data.push(serverData);
+        app.querySelectorAll('.server').forEach(server => {
+          appData.servers.push({
+            name: server.querySelector('input[type="text"]').value,
+            checks: Array.from(server.querySelectorAll('input[type="checkbox"]')).map(c => c.checked),
+            note: server.querySelector('textarea').value
+          });
+        });
+        data.push(appData);
       });
       localStorage.setItem('planTrabajoDinamico', JSON.stringify(data));
     }
@@ -257,134 +300,14 @@
       const saved = localStorage.getItem('planTrabajoDinamico');
       if (saved) {
         const data = JSON.parse(saved);
-        data.forEach(s => addServer(s.name, s.checks, s.note));
-      }
-    }
-
-    // ---------------------------
-    // IndexedDB helpers (para guardar el FileHandle)
-    // ---------------------------
-    function openHandlesDB() {
-      return new Promise((resolve, reject) => {
-        if (!window.indexedDB) return reject(new Error('IndexedDB no disponible'));
-        const req = indexedDB.open('plan-work-handles', 1);
-        req.onupgradeneeded = (e) => {
-          const db = e.target.result;
-          if (!db.objectStoreNames.contains('handles')) db.createObjectStore('handles');
-        };
-        req.onsuccess = (e) => resolve(e.target.result);
-        req.onerror = (e) => reject(e);
-      });
-    }
-
-    async function storeFileHandle(handle) {
-      try {
-        const db = await openHandlesDB();
-        return new Promise((resolve, reject) => {
-          const tx = db.transaction('handles', 'readwrite');
-          const store = tx.objectStore('handles');
-          const r = store.put(handle, 'dataJson');
-          r.onsuccess = () => resolve();
-          r.onerror = (e) => reject(e);
+        data.forEach(app => {
+          addApp(app.name);
+          const lastApp = document.querySelector('.app:last-child');
+          app.servers.forEach(s => addServer(lastApp.querySelector('button'), s.name, s.checks, s.note));
         });
-      } catch (err) {
-        console.warn('storeFileHandle error', err);
       }
     }
 
-    async function getStoredFileHandle() {
-      try {
-        const db = await openHandlesDB();
-        return new Promise((resolve, reject) => {
-          const tx = db.transaction('handles', 'readonly');
-          const store = tx.objectStore('handles');
-          const r = store.get('dataJson');
-          r.onsuccess = () => resolve(r.result);
-          r.onerror = () => resolve(null);
-        });
-      } catch (err) {
-        return null;
-      }
-    }
-
-    // ---------------------------
-    // exportData: sobrescribe siempre data.json
-    // ---------------------------
-    async function exportData() {
-      // construye data (incluye checks completo, progress y notas)
-      const data = [];
-      document.querySelectorAll('.server').forEach(server => {
-        const checks = Array.from(server.querySelectorAll('input[type="checkbox"]')).map(c => c.checked);
-        const progress = parseInt(server.querySelector('.progress-text').textContent) || 0;
-        data.push({
-          name: server.querySelector('input[type="text"]').value,
-          checks: checks,
-          progress: progress,
-          note: server.querySelector('textarea').value
-        });
-      });
-      const jsonData = JSON.stringify(data, null, 2);
-
-      // Si el navegador soporta File System Access API intentamos sobrescribir el mismo archivo
-      if (window.showSaveFilePicker) {
-        try {
-          // 1) Intentar usar el handle ya guardado
-          const storedHandle = await getStoredFileHandle();
-          if (storedHandle) {
-            // comprobar permisos
-            try {
-              const permission = await storedHandle.queryPermission({ mode: 'readwrite' });
-              if (permission !== 'granted') {
-                const reqPerm = await storedHandle.requestPermission({ mode: 'readwrite' });
-                if (reqPerm !== 'granted') throw new Error('Permiso de escritura denegado');
-              }
-              // escribir
-              const writable = await storedHandle.createWritable();
-              await writable.write(jsonData);
-              await writable.close();
-              saveState(); // conserva localStorage
-              alert('✅ data.json sobrescrito correctamente (handle almacenado).');
-              return;
-            } catch (err) {
-              console.warn('No se pudo escribir en el handle almacenado:', err);
-              // cae a pedir nuevo archivo
-            }
-          }
-
-          // 2) Si no hay handle o no se pudo usar, pedir al usuario donde guardarlo y almacenar el handle
-          const handle = await window.showSaveFilePicker({
-            suggestedName: 'data.json',
-            types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
-          });
-          if (handle) {
-            const writable = await handle.createWritable();
-            await writable.write(jsonData);
-            await writable.close();
-            // almacenar para próximas sobrescrituras
-            try { await storeFileHandle(handle); } catch(e){ console.warn('No se pudo guardar el handle en IndexedDB', e); }
-            saveState();
-            alert('✅ data.json guardado y handle almacenado. Próximas exportaciones lo sobrescribirán.');
-            return;
-          }
-        } catch (err) {
-          console.warn('Error usando File System Access API:', err);
-          // fallback a descarga
-        }
-      }
-
-      // Fallback: descarga tradicional (funciona en todos los navegadores)
-      const blob = new Blob([jsonData], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'data.json';
-      a.click();
-      URL.revokeObjectURL(url);
-      saveState();
-      alert('✅ Se descargó data.json (fallback).');
-    }
-
-    // iniciar
     loadState();
   </script>
 </body>
