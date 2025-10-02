@@ -161,11 +161,14 @@
         <h2>Aplicación: <input type="text" value="${name}" placeholder="Nombre de la aplicación"></h2>
         <button class="btn" onclick="addServer(this)">➕ Agregar Servidor</button>
         <div class="servers"></div>
-        <h3>Avance de la Aplicación: <span class="app-progress-text">0%</span></h3>
-        <progress value="0" max="100" class="app-progress"></progress>
       `;
 
-      appsDiv.appendChild(appDiv);
+      // 👉 Insertar al inicio
+      if (appsDiv.firstChild) {
+        appsDiv.insertBefore(appDiv, appsDiv.firstChild);
+      } else {
+        appsDiv.appendChild(appDiv);
+      }
     }
 
     function addServer(button, name = "", checks = [], note = "") {
@@ -195,7 +198,12 @@
         <textarea placeholder="Escribe aquí notas u observaciones...">${note}</textarea>`;
       serverDiv.innerHTML = html;
 
-      serversDiv.appendChild(serverDiv);
+      // 👉 Insertar al inicio
+      if (serversDiv.firstChild) {
+        serversDiv.insertBefore(serverDiv, serversDiv.firstChild);
+      } else {
+        serversDiv.appendChild(serverDiv);
+      }
 
       serverDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => updateProgress(serverDiv));
@@ -216,24 +224,8 @@
       progressBar.value = percent;
       setProgressColor(progressBar, percent);
 
-      updateAppProgress(serverDiv.closest('.app'));
       updateTotalProgress();
       saveState();
-    }
-
-    function updateAppProgress(appDiv) {
-      const servers = appDiv.querySelectorAll('.server');
-      let total = 0, count = 0;
-      servers.forEach(server => {
-        const percent = parseInt(server.querySelector('.progress-text').textContent);
-        total += percent;
-        count++;
-      });
-      const avg = count ? Math.round(total / count) : 0;
-      appDiv.querySelector('.app-progress-text').textContent = avg + "%";
-      const appBar = appDiv.querySelector('.app-progress');
-      appBar.value = avg;
-      setProgressColor(appBar, avg);
     }
 
     function updateTotalProgress() {
@@ -300,14 +292,17 @@
       const saved = localStorage.getItem('planTrabajoDinamico');
       if (saved) {
         const data = JSON.parse(saved);
-        data.forEach(app => {
+        [...data].reverse().forEach(app => {
           addApp(app.name);
-          const lastApp = document.querySelector('.app:last-child');
-          app.servers.forEach(s => addServer(lastApp.querySelector('button'), s.name, s.checks, s.note));
+          const lastApp = document.querySelector('.app:first-child');
+          [...app.servers].reverse().forEach(s => {
+            addServer(lastApp.querySelector('button'), s.name, s.checks, s.note);
+          });
         });
       }
     }
 
+    // iniciar
     loadState();
   </script>
 </body>
