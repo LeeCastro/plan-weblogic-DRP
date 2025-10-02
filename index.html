@@ -2,69 +2,29 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Avance Capa Media - Seguros Bolivar</title>
+  <title>Avance DR - Capa Media - Seguros Bolivar</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #2c3e50;
-    }
-    .server {
-      background: #fff;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .server h2 {
-      margin-top: 0;
-    }
-    progress {
-      width: 100%;
-      height: 20px;
-      margin-top: 5px;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-    progress::-webkit-progress-bar {
-      background-color: #eee;
-      border-radius: 5px;
-    }
-    progress::-webkit-progress-value {
-      border-radius: 5px;
-    }
-    progress.low::-webkit-progress-value { background: #e74c3c; }
-    progress.medium::-webkit-progress-value { background: #f1c40f; }
-    progress.high::-webkit-progress-value { background: #2ecc71; }
-    .total-progress {
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .server-progress {
-      margin: 10px 0;
-    }
-    .note {
-      margin-top: 10px;
-      padding: 8px;
-      border-left: 3px solid #3498db;
-      background: #f9f9f9;
-      font-style: italic;
-      color: #333;
-      white-space: pre-wrap;
-    }
+    body { font-family: Arial, sans-serif; background:#f4f6f9; padding:20px; }
+    h1 { text-align:center; color:#2c3e50; }
+    .app { background:#ecf0f1; border-radius:10px; padding:15px; margin-bottom:20px; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+    .app h2 { margin:0 0 10px 0; color:#1a5276; }
+    .server { background:#fff; border-radius:8px; padding:12px; margin:10px 0; box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+    .server h3 { margin:0 0 6px 0; color:#34495e; }
+    progress { width:100%; height:18px; margin:6px 0; -webkit-appearance:none; appearance:none; }
+    progress::-webkit-progress-bar { background:#eee; border-radius:5px; }
+    progress::-webkit-progress-value { border-radius:5px; }
+    progress.low::-webkit-progress-value { background:#e74c3c; }
+    progress.medium::-webkit-progress-value { background:#f1c40f; }
+    progress.high::-webkit-progress-value { background:#2ecc71; }
+    .note { margin-top:6px; font-style:italic; color:#555; white-space:pre-wrap; }
+    .total-progress { background:#fff; padding:15px; border-radius:8px; margin-top:20px; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+    .server-progress { margin:8px 0; }
   </style>
 </head>
 <body>
-  <h1>Avance Capa Media - Seguros Bolivar</h1>
+  <h1>Avance DR - Capa Media - Seguros Bolivar</h1>
 
-  <div id="servers"></div>
+  <div id="apps"></div>
 
   <div class="total-progress">
     <h2>Avance Total</h2>
@@ -77,51 +37,87 @@
   <script>
     async function loadData() {
       try {
+        // Evita cache viejo en GitHub Pages
         const response = await fetch("data.json?nocache=" + new Date().getTime());
-        const servers = await response.json();
-        renderServers(servers);
+        const data = await response.json();
+        renderApps(data);
       } catch (e) {
-        document.getElementById("servers").innerHTML =
-          "<p style='color:red;'>⚠️ Error cargando datos. Asegúrate de que el archivo data.json existe en el repositorio.</p>";
+        document.getElementById("apps").innerHTML =
+          "<p style='color:red;'>❌ Error cargando datos. Verifica que data.json esté publicado en el repositorio.</p>";
       }
     }
 
-    function renderServers(servers) {
-      const serversDiv = document.getElementById("servers");
-      serversDiv.innerHTML = "";
+    function renderApps(apps) {
+      const appsDiv = document.getElementById("apps");
+      appsDiv.innerHTML = "";
+
       let total = 0, count = 0;
 
-      servers.forEach((server, idx) => {
-        const percent = server.progress || 0;
-        total += percent;
-        count++;
+      apps.forEach(app => {
+        const appDiv = document.createElement("div");
+        appDiv.className = "app";
+        appDiv.innerHTML = `<h2>Aplicación: ${escapeHtml(app.name || "Sin nombre")}</h2>`;
 
-        const div = document.createElement("div");
-        div.className = "server";
+        app.servers.forEach(server => {
+          const percent = server.progress || 0;
+          total += percent;
+          count++;
 
-        div.innerHTML = `
-          <h2>${server.name}</h2>
-          <p>Avance (Capa media): <b>${percent}%</b></p>
-          <progress value="${percent}" max="100" class="${getClass(percent)}"></progress>
-          <h3>Observaciones</h3>
-          <div class="note">${server.note ? server.note : "Sin observaciones."}</div>
-        `;
+          const serverDiv = document.createElement("div");
+          serverDiv.className = "server";
+          serverDiv.innerHTML = `
+            <h3>Servidor: ${escapeHtml(server.name || "Sin nombre")}</h3>
+            <p>Avance: <b>${percent}%</b></p>
+            <progress value="${percent}" max="100" class="${getClass(percent)}"></progress>
+            ${server.note ? `<div class="note">📝 ${escapeHtml(server.note)}</div>` : ""}
+          `;
+          appDiv.appendChild(serverDiv);
+        });
 
-        serversDiv.appendChild(div);
+        appsDiv.appendChild(appDiv);
       });
 
+      // Promedio general
       const avg = count ? Math.round(total / count) : 0;
       document.getElementById("total-text").textContent = avg + "%";
 
       const totalBar = document.getElementById("total-progress");
       totalBar.value = avg;
       totalBar.className = getClass(avg);
+
+      // Resumen por servidor
+      const summaryDiv = document.getElementById("progress-summary");
+      summaryDiv.innerHTML = "";
+      apps.forEach(app => {
+        app.servers.forEach(server => {
+          const percent = server.progress || 0;
+          const bar = document.createElement("div");
+          bar.className = "server-progress";
+          const p = document.createElement("progress");
+          p.value = percent;
+          p.max = 100;
+          p.className = getClass(percent);
+          bar.innerHTML = `<p><b>${escapeHtml(app.name || "App")}/${escapeHtml(server.name || "Servidor")}</b>: ${percent}%</p>`;
+          bar.appendChild(p);
+          summaryDiv.appendChild(bar);
+        });
+      });
     }
 
     function getClass(percent) {
       if (percent < 50) return "low";
       else if (percent < 80) return "medium";
       else return "high";
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
     loadData();

@@ -20,7 +20,6 @@
     progress.high::-webkit-progress-value { background:#2ecc71; }
     textarea { width:100%; min-height:64px; margin-top:8px; border-radius:6px; border:1px solid #ccc; padding:8px; resize:vertical; font-family:inherit; }
     .btn { display:inline-block; margin:8px 6px 8px 0; padding:8px 14px; border:none; border-radius:6px; background:#3498db; color:#fff; cursor:pointer; }
-    .btn.secondary { background:#7f8c8d; }
     .controls { margin-bottom:16px; }
     .total-progress { background:#fff; padding:12px; border-radius:8px; margin-top:16px; box-shadow:0 2px 5px rgba(0,0,0,0.06); }
     .server-progress { margin:8px 0; }
@@ -35,8 +34,6 @@
   <div class="controls">
     <button class="btn" onclick="addApp()">➕ Agregar Aplicación</button>
     <button class="btn" onclick="exportData()">💾 Exportar Avance (data.json)</button>
-    <button class="btn secondary" onclick="bindExistingDataJson()">🔗 Vincular data.json (opcional)</button>
-    <span class="small"> (Si vinculas el archivo, las exportaciones intentarán sobrescribirlo automáticamente.)</span>
   </div>
 
   <div id="apps"></div>
@@ -88,11 +85,10 @@
       ]
     };
 
-    // Sólo estos grupos cuentan para el % (se excluye Post-Instalación)
     const groupsToCount = ["Prerrequisitos", "WebLogic Instalación y Configuración"];
 
     /***********************
-     * IndexedDB para FileHandle (File System Access)
+     * IndexedDB para FileHandle
      ***********************/
     function openHandlesDB() {
       return new Promise((resolve, reject) => {
@@ -138,7 +134,7 @@
     }
 
     /***********************
-     * UI: Agregar App / Servidor (inserción al inicio)
+     * UI: Agregar App / Servidor
      ***********************/
     function addApp(name = "Nueva Aplicación") {
       const appsDiv = document.getElementById('apps');
@@ -151,11 +147,9 @@
         <div class="servers"></div>
       `;
 
-      // Insertar al inicio
       if (appsDiv.firstChild) appsDiv.insertBefore(appDiv, appsDiv.firstChild);
       else appsDiv.appendChild(appDiv);
 
-      // Guardar estado cuando se cambie el nombre de la app
       appDiv.querySelector('input[type="text"]').addEventListener('input', saveState);
     }
 
@@ -164,7 +158,6 @@
       const serverDiv = document.createElement('div');
       serverDiv.className = 'server';
 
-      // construir formulario de tareas
       let html = `<h3>Servidor: <input type="text" placeholder="Nombre del servidor" value="${escapeHtml(name)}"></h3><form>`;
       let i = 0;
       for (const [group, tasks] of Object.entries(taskGroups)) {
@@ -184,11 +177,9 @@
 
       serverDiv.innerHTML = html;
 
-      // Insertar al inicio de la lista de servidores
       if (serversDiv.firstChild) serversDiv.insertBefore(serverDiv, serversDiv.firstChild);
       else serversDiv.appendChild(serverDiv);
 
-      // Listeners
       serverDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.addEventListener('change', () => {
         updateProgress(serverDiv);
         updateTotalProgress();
@@ -196,7 +187,6 @@
       serverDiv.querySelector('input[type="text"]').addEventListener('input', saveState);
       serverDiv.querySelector('textarea').addEventListener('input', saveState);
 
-      // calcular progreso inicial
       updateProgress(serverDiv);
       updateTotalProgress();
     }
@@ -209,14 +199,11 @@
       const checked = serverDiv.querySelectorAll('input[type="checkbox"][data-countable="true"]:checked');
       const totalCount = checkboxes.length || 0;
       const percent = totalCount === 0 ? 0 : Math.round((checked.length / totalCount) * 100);
-      const pctTextEl = serverDiv.querySelector('.progress-text');
-      if (pctTextEl) pctTextEl.textContent = percent + "%";
+      serverDiv.querySelector('.progress-text').textContent = percent + "%";
 
       const progressBar = serverDiv.querySelector('progress');
-      if (progressBar) {
-        progressBar.value = percent;
-        setProgressColor(progressBar, percent);
-      }
+      progressBar.value = percent;
+      setProgressColor(progressBar, percent);
 
       saveState();
     }
@@ -228,9 +215,8 @@
 
       let total = 0, count = 0;
       servers.forEach((server, idx) => {
-        const nameInput = server.querySelector('h3 input');
-        const name = nameInput ? (nameInput.value || `Servidor ${idx+1}`) : `Servidor ${idx+1}`;
-        const percent = parseInt(server.querySelector('.progress-text')?.textContent) || 0;
+        const name = server.querySelector('h3 input').value || `Servidor ${idx+1}`;
+        const percent = parseInt(server.querySelector('.progress-text').textContent) || 0;
         total += percent;
         count++;
 
@@ -260,24 +246,26 @@
     }
 
     /***********************
-     * Guardar / Cargar en localStorage
+     * Guardar / Cargar
      ***********************/
     function saveState() {
       const data = [];
       document.querySelectorAll('.app').forEach(app => {
-        const appName = app.querySelector('h2 input') ? app.querySelector('h2 input').value : '';
-        const appData = { name: appName, servers: [] };
+        const appData = {
+          name: app.querySelector('h2 input').value,
+          servers: []
+        };
         app.querySelectorAll('.server').forEach(server => {
-          const serverName = server.querySelector('h3 input') ? server.querySelector('h3 input').value : '';
-          const checks = Array.from(server.querySelectorAll('input[type="checkbox"]')).map(c => c.checked);
-          const progress = parseInt(server.querySelector('.progress-text')?.textContent) || 0;
-          const note = server.querySelector('textarea') ? server.querySelector('textarea').value : '';
-          appData.servers.push({ name: serverName, checks, progress, note });
+          appData.servers.push({
+            name: server.querySelector('h3 input').value,
+            checks: Array.from(server.querySelectorAll('input[type="checkbox"]')).map(c => c.checked),
+            progress: parseInt(server.querySelector('.progress-text').textContent) || 0,
+            note: server.querySelector('textarea').value
+          });
         });
         data.push(appData);
       });
       localStorage.setItem('planTrabajoDinamico', JSON.stringify(data));
-      // También actualizar el panel de resumen
       updateTotalProgress();
     }
 
@@ -286,15 +274,11 @@
       if (!saved) return;
       try {
         const data = JSON.parse(saved);
-        // Para respetar el orden guardado y porque addApp/addServer insertan al inicio,
-        // iteramos desde el final al inicio (reverse) para reconstruir igual visualmente.
         for (let ai = data.length - 1; ai >= 0; ai--) {
           const app = data[ai];
           addApp(app.name || 'Aplicación');
-          // la app recién creada está en el primer lugar (inicio)
           const appDiv = document.querySelector('.app:first-child');
           if (!appDiv) continue;
-          // agregar servidores en reverse también para preservar orden interno
           if (Array.isArray(app.servers)) {
             for (let si = app.servers.length - 1; si >= 0; si--) {
               const s = app.servers[si];
@@ -309,33 +293,29 @@
     }
 
     /***********************
-     * Exportar data.json (intento sobrescribir handle guardado)
+     * Exportar data.json
      ***********************/
     async function exportData() {
-      // construir estructura apps -> servers
       const data = [];
       document.querySelectorAll('.app').forEach(app => {
-        const appName = app.querySelector('h2 input') ? app.querySelector('h2 input').value : '';
-        const appData = { name: appName, servers: [] };
+        const appData = { name: app.querySelector('h2 input').value, servers: [] };
         app.querySelectorAll('.server').forEach(server => {
-          const sName = server.querySelector('h3 input') ? server.querySelector('h3 input').value : '';
-          const checks = Array.from(server.querySelectorAll('input[type="checkbox"]')).map(c => c.checked);
-          const progress = parseInt(server.querySelector('.progress-text')?.textContent) || 0;
-          const note = server.querySelector('textarea') ? server.querySelector('textarea').value : '';
-          appData.servers.push({ name: sName, checks, progress, note });
+          appData.servers.push({
+            name: server.querySelector('h3 input').value,
+            checks: Array.from(server.querySelectorAll('input[type="checkbox"]')).map(c => c.checked),
+            progress: parseInt(server.querySelector('.progress-text').textContent) || 0,
+            note: server.querySelector('textarea').value
+          });
         });
         data.push(appData);
       });
 
       const jsonData = JSON.stringify(data, null, 2);
 
-      // Intento con File System Access API
       if (window.showSaveFilePicker) {
         try {
-          // intentar usar handle almacenado
           const storedHandle = await getStoredFileHandle();
           if (storedHandle) {
-            // pedir permiso si hace falta
             try {
               const permission = await storedHandle.queryPermission({ mode: 'readwrite' });
               if (permission !== 'granted') {
@@ -346,15 +326,11 @@
               await writable.write(jsonData);
               await writable.close();
               saveState();
-              alert('✅ data.json sobrescrito correctamente (handle almacenado).');
+              alert('✅ data.json sobrescrito correctamente.');
               return;
-            } catch (err) {
-              console.warn('No se pudo escribir en el handle almacenado:', err);
-              // seguimos para pedir nuevo archivo
-            }
+            } catch {}
           }
 
-          // pedir al usuario dónde guardar y almacenar handle
           const handle = await window.showSaveFilePicker({
             suggestedName: 'data.json',
             types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
@@ -363,18 +339,14 @@
             const writable = await handle.createWritable();
             await writable.write(jsonData);
             await writable.close();
-            try { await storeFileHandle(handle); } catch(e){ console.warn('No se pudo guardar handle', e); }
+            try { await storeFileHandle(handle); } catch {}
             saveState();
-            alert('✅ data.json guardado y handle almacenado. Próximas exportaciones lo sobrescribirán.');
+            alert('✅ data.json guardado correctamente.');
             return;
           }
-        } catch (err) {
-          console.warn('Error usando File System Access API:', err);
-          // fallback
-        }
+        } catch {}
       }
 
-      // Fallback descarga
       const blob = new Blob([jsonData], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -384,29 +356,6 @@
       URL.revokeObjectURL(url);
       saveState();
       alert('✅ Se descargó data.json (fallback).');
-    }
-
-    /***********************
-     * Vincular data.json existente (opcional)
-     ***********************/
-    async function bindExistingDataJson() {
-      if (!window.showOpenFilePicker) {
-        alert('Tu navegador no soporta la función de vincular archivos (File System Access API).');
-        return;
-      }
-      try {
-        const [handle] = await window.showOpenFilePicker({
-          multiple: false,
-          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
-        });
-        if (handle) {
-          // guardar el handle para futuras sobreescrituras
-          try { await storeFileHandle(handle); } catch(e){ console.warn('No se pudo almacenar handle', e); }
-          alert('✅ data.json vinculado. Las próximas exportaciones intentarán sobrescribir este archivo.');
-        }
-      } catch (err) {
-        console.warn('bindExistingDataJson error', err);
-      }
     }
 
     /***********************
@@ -426,7 +375,6 @@
      * Inicio
      ***********************/
     loadState();
-    // actualizar resumen en inicio
     setTimeout(updateTotalProgress, 200);
   </script>
 </body>
