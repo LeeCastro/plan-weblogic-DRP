@@ -296,10 +296,10 @@
           true,
           true,
           true,
+          true,
           false,
           false,
-          false,
-          false,
+          true,
           false,
           false,
           false,
@@ -319,7 +319,7 @@
           false,
           false
         ],
-        "progress": 24,
+        "progress": 32,
         "note": "Se valida nuevamente los prerrequisitos y se acepta las máquinas ya que se instalaron las librerías necesarias.\n\nSe procederá con el cargue de instaladores para posteriormente ejecutar la instalación.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
       },
       {
@@ -331,10 +331,10 @@
           true,
           true,
           true,
+          true,
           false,
           false,
-          false,
-          false,
+          true,
           false,
           false,
           false,
@@ -354,7 +354,7 @@
           false,
           false
         ],
-        "progress": 24,
+        "progress": 32,
         "note": "Se valida nuevamente los prerrequisitos y se acepta las máquinas ya que se instalaron las librerías necesarias.\n\nSe procederá con el cargue de instaladores para posteriormente ejecutar la instalación.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
       },
       {
@@ -366,10 +366,10 @@
           true,
           true,
           true,
+          true,
           false,
           false,
-          false,
-          false,
+          true,
           false,
           false,
           false,
@@ -389,7 +389,7 @@
           false,
           false
         ],
-        "progress": 24,
+        "progress": 32,
         "note": "Se valida nuevamente los prerrequisitos y se acepta las máquinas ya que se instalaron las librerías necesarias.\n\nSe procederá con el cargue de instaladores para posteriormente ejecutar la instalación.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
       }
     ]
