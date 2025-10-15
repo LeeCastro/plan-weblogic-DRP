@@ -297,13 +297,13 @@
           true,
           true,
           true,
-          false,
-          false,
           true,
           false,
+          true,
+          true,
           false,
-          false,
-          false,
+          true,
+          true,
           false,
           false,
           false,
@@ -319,8 +319,8 @@
           false,
           false
         ],
-        "progress": 32,
-        "note": "Se valida nuevamente los prerrequisitos y se acepta las máquinas ya que se instalaron las librerías necesarias.\n\nSe procederá con el cargue de instaladores para posteriormente ejecutar la instalación.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
+        "progress": 48,
+        "note": "Se está realizando la configuración del dominio donde se observa que los formsweb.cfg tiene apuntamiento webstart_codebase=https://prodtronador.bolnet.com.co/forms/java, este DNS debe ser modificado para cambiarlo en cada formsweb de los manejados, escalado con Laura.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
       },
       {
         "name": "AP18SBCC09",
@@ -332,14 +332,14 @@
           true,
           true,
           true,
+          true,
           false,
-          false,
+          true,
           true,
           false,
           false,
-          false,
-          false,
-          false,
+          true,
+          true,
           false,
           false,
           false,
@@ -354,8 +354,8 @@
           false,
           false
         ],
-        "progress": 32,
-        "note": "Se valida nuevamente los prerrequisitos y se acepta las máquinas ya que se instalaron las librerías necesarias.\n\nSe procederá con el cargue de instaladores para posteriormente ejecutar la instalación.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
+        "progress": 48,
+        "note": "Se está realizando la configuración del dominio donde se observa que los formsweb.cfg tiene apuntamiento webstart_codebase=https://prodtronador.bolnet.com.co/forms/java, este DNS debe ser modificado para cambiarlo en cada formsweb de los manejados, escalado con Laura.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
       },
       {
         "name": "AP17SBCC09",
@@ -367,21 +367,21 @@
           true,
           true,
           true,
-          false,
-          false,
           true,
           false,
+          true,
+          true,
           false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
           false,
           false,
           false,
@@ -389,8 +389,8 @@
           false,
           false
         ],
-        "progress": 32,
-        "note": "Se valida nuevamente los prerrequisitos y se acepta las máquinas ya que se instalaron las librerías necesarias.\n\nSe procederá con el cargue de instaladores para posteriormente ejecutar la instalación.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
+        "progress": 80,
+        "note": "Se está realizando la configuración del dominio donde se observa que los formsweb.cfg tiene apuntamiento webstart_codebase=https://prodtronador.bolnet.com.co/forms/java, este DNS debe ser modificado para cambiarlo en cada formsweb de los manejados, escalado con Laura.\n\nNo están presentados los siguientes discos, validar el cómo se van a presentar.\n\n  NFS:/llicit_dav                      nfs4      501G   /llicit_dav\n  NFS:/tronador                      nfs4      630G   /u/home/tronador\n\nTener en cuenta los siguientes discos que se deben presentar desde este server de cobol.\n\n  AP20SBCC04:/batch           nfs4      400G   /batch\n  AP20SBCC04:/listlog             nfs4       70G    /listlog\n  AP20SBCC04:/listado         nfs4       70G   /listado\n  AP20SBCC04:/dafuturo       nfs4       20G   /dafuturo\n  AP20SBCC04:/arp              nfs4       50G    /arp\n\nSe envía correo con los hallazgos"
       }
     ]
   },
@@ -659,7 +659,7 @@
           true,
           true,
           true,
-          false,
+          true,
           true,
           true,
           false,
@@ -679,7 +679,7 @@
           false,
           false
         ],
-        "progress": 56,
+        "progress": 60,
         "note": "Se validan los prerrequisitos de las máquinas donde se observa que faltan los discos NFS.\n\n  NFS:/terceros                   nfs4      150G   /u/home/terceros\n  NFS:/pcapi                       nfs4      150G   /u/home/pcapi\n  NFS:/pprest                      nfs4      150G   /u/home/pprest\n\nActualmente se encuentra instalado el weblogic y se esta configurando el RCU de la base de datos."
       },
       {
@@ -696,15 +696,15 @@
           true,
           false,
           true,
+          false,
           true,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
           true,
           true,
           false,
@@ -714,8 +714,8 @@
           false,
           false
         ],
-        "progress": 56,
-        "note": "Se validan los prerrequisitos de las máquinas donde se observa que faltan los discos NFS.\n\n  NFS:/terceros                   nfs4      150G   /u/home/terceros\n  NFS:/pcapi                       nfs4      150G   /u/home/pcapi\n  NFS:/pprest                      nfs4      150G   /u/home/pprest\n\nActualmente se encuentra instalado el weblogic y se esta configurando el RCU de la base de datos."
+        "progress": 84,
+        "note": "Se validan los prerrequisitos de las máquinas donde se observa que faltan los discos NFS.\n\n  NFS:/terceros                   nfs4      150G   /u/home/terceros\n  NFS:/pcapi                       nfs4      150G   /u/home/pcapi\n  NFS:/pprest                      nfs4      150G   /u/home/pprest\n\nSe está configurando apuntamientos y variables de entorno de las formas, confirmar este apuntamiento webstart_codebase=https://prodterceros.bolnet.com.co/forms/java en /oracle/app/Oracle/Middleware/Oracle_Home/user_projects/domains/Prodias_frm/config/fmwconfig/servers/WLS_FORMS_TER1/applications/formsapp_12.2.1/config/formsweb.cfg"
       }
     ]
   },
@@ -788,13 +788,13 @@
           true,
           true,
           true,
-          false,
+          true,
           true,
           false,
           false,
           false
         ],
-        "progress": 96,
+        "progress": 100,
         "note": "Se han completado las configuraciones de apuntamientos de consumo en WebLogic, abarcando la definición de clusters, configuración de balanceadores (manejadores) y despliegue de aplicaciones. Asimismo, se realizó el cargue de certificados de seguridad requeridos y se verificó que la consola administrativa se encuentra operativa con los manejadores en estado Running.\nQueda pendiente la configuración de los Data Sources (DS), puesto que, las diferentes bases de datos que se consumen desde los DS de DRP están apuntando a PRD, se esta ajustando estos apuntamientos desde los DBA."
       }
     ]
@@ -828,13 +828,13 @@
           true,
           true,
           true,
-          false,
+          true,
           true,
           false,
           false,
           false
         ],
-        "progress": 96,
+        "progress": 100,
         "note": ""
       },
       {
@@ -863,13 +863,13 @@
           true,
           true,
           true,
-          false,
+          true,
           true,
           false,
           false,
           false
         ],
-        "progress": 96,
+        "progress": 100,
         "note": ""
       }
     ]
