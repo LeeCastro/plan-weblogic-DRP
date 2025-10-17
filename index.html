@@ -58,12 +58,6 @@
       text-align: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .refresh {
-      text-align: center;
-      color: #999;
-      font-size: 14px;
-      margin-top: 10px;
-    }
   </style>
 </head>
 <body>
@@ -75,17 +69,15 @@
     <h2>Promedio General</h2>
     <canvas id="totalChart"></canvas>
     <p><span id="total-text">0%</span></p>
-    <div class="refresh" id="refresh-time">⏳ Actualizando datos...</div>
   </div>
 
   <script>
-    const charts = {}; // Guardar las gráficas activas
-
     // 🧩 Plugin para texto central en las gráficas
     const centerTextPlugin = {
       id: 'centerText',
       beforeDraw(chart) {
-        const { ctx, width } = chart;
+        const { width } = chart;
+        const { ctx } = chart;
         const dataset = chart.data.datasets[0];
         const value = dataset.data[0];
         ctx.save();
@@ -103,10 +95,9 @@
         const response = await fetch("data.json?nocache=" + new Date().getTime());
         const apps = await response.json();
         renderApps(apps);
-        updateRefreshTime();
       } catch (e) {
         document.getElementById("apps").innerHTML =
-          "<p style='color:red;'>❌ Error cargando datos. Verifica que el archivo data.json existe y es válido.</p>";
+          "<p style='color:red;'>❌ Error cargando datos. Asegúrate de que el archivo data.json existe y es válido.</p>";
       }
     }
 
@@ -123,17 +114,48 @@
         const chartContainer = document.createElement("div");
         chartContainer.className = "chart-container";
 
+        // Calcular promedio por aplicación
         let appSum = 0, serverCount = 0;
         (app.servers || []).forEach(s => { appSum += s.progress || 0; serverCount++; });
         const appAvg = serverCount ? Math.round(appSum / serverCount) : 0;
         total += appAvg; count++;
 
+        // Gráfico principal de la aplicación
         const appCanvas = document.createElement("canvas");
         appCanvas.id = `appChart${appIndex}`;
         chartContainer.appendChild(appCanvas);
 
-        drawChart(appCanvas, appAvg, `Promedio general: ${appAvg}%`, appCanvas.id);
+        new Chart(appCanvas, {
+          type: 'doughnut',
+          data: {
+            labels: [`${appAvg}%`, 'Restante'],
+            datasets: [{
+              data: [appAvg, 100 - appAvg],
+              backgroundColor: [getColor(appAvg), '#ecf0f1'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: () => `Promedio general: ${appAvg}%`
+                }
+              }
+            },
+            animation: {
+              animateRotate: true,
+              animateScale: true,
+              duration: 1500,
+              easing: 'easeOutQuart'
+            },
+            cutout: '70%'
+          },
+          plugins: [centerTextPlugin]
+        });
 
+        // Gráficos por servidor
         (app.servers || []).forEach((server, i) => {
           const serverDiv = document.createElement("div");
           serverDiv.className = "server";
@@ -144,55 +166,78 @@
           if (server.note) serverDiv.innerHTML += `<div class="note">📝 ${server.note}</div>`;
           chartContainer.appendChild(serverDiv);
 
-          const tooltipText = `Servidor: ${server.name}\nAvance: ${server.progress}%${server.note ? "\nNota: " + server.note : ""}`;
-          drawChart(serverCanvas, server.progress, tooltipText, serverCanvas.id);
+          new Chart(serverCanvas, {
+            type: 'doughnut',
+            data: {
+              labels: [`${server.progress}%`, 'Restante'],
+              datasets: [{
+                data: [server.progress, 100 - server.progress],
+                backgroundColor: [getColor(server.progress), '#ecf0f1'],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  callbacks: {
+                    label: function() {
+                      let tooltipText = `Servidor: ${server.name}\nAvance: ${server.progress}%`;
+                      if (server.note) tooltipText += `\nNota: ${server.note}`;
+                      return tooltipText;
+                    }
+                  }
+                }
+              },
+              animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 1200,
+                easing: 'easeOutCubic'
+              },
+              cutout: '70%'
+            },
+            plugins: [centerTextPlugin]
+          });
         });
 
         appDiv.appendChild(chartContainer);
         appsDiv.appendChild(appDiv);
       });
 
+      // Gráfico del promedio total
       const avg = count ? Math.round(total / count) : 0;
       document.getElementById("total-text").textContent = avg + "%";
-      drawChart(document.getElementById("totalChart"), avg, `Promedio total: ${avg}%`, "totalChart");
-    }
 
-    function drawChart(canvas, percent, tooltipLabel, id) {
-      if (charts[id]) {
-        // 🔁 Actualizar gráfico existente
-        charts[id].data.datasets[0].data = [percent, 100 - percent];
-        charts[id].data.datasets[0].backgroundColor = [getColor(percent), '#ecf0f1'];
-        charts[id].update();
-      } else {
-        // 🎨 Crear gráfico nuevo
-        charts[id] = new Chart(canvas, {
-          type: 'doughnut',
-          data: {
-            labels: [`${percent}%`, 'Restante'],
-            datasets: [{
-              data: [percent, 100 - percent],
-              backgroundColor: [getColor(percent), '#ecf0f1'],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: { label: () => tooltipLabel }
+      new Chart(document.getElementById("totalChart"), {
+        type: 'doughnut',
+        data: {
+          labels: [`${avg}%`, 'Restante'],
+          datasets: [{
+            data: [avg, 100 - avg],
+            backgroundColor: [getColor(avg), '#ecf0f1'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: () => `Promedio general total: ${avg}%`
               }
-            },
-            animation: {
-              animateRotate: true,
-              animateScale: true,
-              duration: 1200,
-              easing: 'easeOutQuart'
-            },
-            cutout: '70%'
+            }
           },
-          plugins: [centerTextPlugin]
-        });
-      }
+          animation: {
+            animateRotate: true,
+            animateScale: true,
+            duration: 1500,
+            easing: 'easeOutElastic'
+          },
+          cutout: '70%'
+        },
+        plugins: [centerTextPlugin]
+      });
     }
 
     function getColor(percent) {
@@ -201,15 +246,7 @@
       else return '#2ecc71';
     }
 
-    function updateRefreshTime() {
-      const el = document.getElementById("refresh-time");
-      const now = new Date();
-      el.textContent = `✅ Última actualización: ${now.toLocaleTimeString()}`;
-    }
-
-    // 🚀 Cargar datos iniciales y refrescar cada 30 segundos
     loadData();
-    setInterval(loadData, 30000);
   </script>
 </body>
 </html>
