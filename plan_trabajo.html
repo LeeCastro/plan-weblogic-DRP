@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Plan de Trabajo - WebLogic - Seguros Bolivar</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body { font-family: Arial, sans-serif; background:#f4f6f9; padding:20px; }
     h1 { text-align:center; color:#2c3e50; }
@@ -24,7 +23,9 @@
     .controls { margin-bottom:16px; }
     .total-progress { background:#fff; padding:12px; border-radius:8px; margin-top:16px; box-shadow:0 2px 5px rgba(0,0,0,0.06); }
     .server-progress { margin:8px 0; }
-    .chart-container { width: 280px; height: 280px; margin: 20px auto; }
+    .note { margin-top:8px; font-style:italic; color:#555; white-space:pre-wrap; }
+    input[type="text"] { padding:6px; border-radius:4px; border:1px solid #ccc; }
+    .small { font-size:0.9em; color:#666; }
   </style>
 </head>
 <body>
@@ -46,6 +47,9 @@
   </div>
 
   <script>
+    /***********************
+     * Configuración
+     ***********************/
     const taskGroups = {
       "Prerrequisitos": [
         "Memoria validada",
@@ -84,33 +88,71 @@
     };
 
     const groupsToCount = ["Prerrequisitos", "WebLogic Instalación y Configuración"];
-    const charts = new Map();
 
+    /***********************
+     * IndexedDB para FileHandle
+     ***********************/
+    function openHandlesDB() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) return reject(new Error('IndexedDB no disponible'));
+        const req = indexedDB.open('plan-work-handles', 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('handles')) db.createObjectStore('handles');
+        };
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = (e) => reject(e);
+      });
+    }
+
+    async function storeFileHandle(handle) {
+      try {
+        const db = await openHandlesDB();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction('handles', 'readwrite');
+          const store = tx.objectStore('handles');
+          const r = store.put(handle, 'dataJson');
+          r.onsuccess = () => resolve();
+          r.onerror = (e) => reject(e);
+        });
+      } catch (err) {
+        console.warn('storeFileHandle error', err);
+      }
+    }
+
+    async function getStoredFileHandle() {
+      try {
+        const db = await openHandlesDB();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction('handles', 'readonly');
+          const store = tx.objectStore('handles');
+          const r = store.get('dataJson');
+          r.onsuccess = () => resolve(r.result);
+          r.onerror = () => resolve(null);
+        });
+      } catch (err) {
+        return null;
+      }
+    }
+
+    /***********************
+     * UI: Agregar App / Servidor
+     ***********************/
     function addApp(name = "Nueva Aplicación") {
       const appsDiv = document.getElementById('apps');
       const appDiv = document.createElement('div');
       appDiv.className = 'app';
-      const id = 'chart-' + Math.random().toString(36).slice(2, 9);
 
       appDiv.innerHTML = `
         <h2>Aplicación: <input type="text" value="${escapeHtml(name)}" placeholder="Nombre de la aplicación"></h2>
         <button class="btn" onclick="addServer(this)">➕ Agregar Servidor</button>
         <div class="servers"></div>
-        <div class="chart-container"><canvas id="${id}"></canvas></div>
       `;
 
       if (appsDiv.firstChild) appsDiv.insertBefore(appDiv, appsDiv.firstChild);
       else appsDiv.appendChild(appDiv);
-      appDiv.querySelector('input[type="text"]').addEventListener('input', saveState);
 
-      charts.set(appDiv, new Chart(document.getElementById(id), {
-        type: 'pie',
-        data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] },
-        options: {
-          responsive: true,
-          plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Avance por servidor' } }
-        }
-      }));
+      appDiv.querySelector('input[type="text"]').addEventListener('input', saveState);
     }
 
     function addServer(button, name = "", checks = [], note = "") {
@@ -144,13 +186,16 @@
         updateProgress(serverDiv);
         updateTotalProgress();
       }));
-      serverDiv.querySelector('input[type="text"]').addEventListener('input', updateTotalProgress);
+      serverDiv.querySelector('input[type="text"]').addEventListener('input', saveState);
       serverDiv.querySelector('textarea').addEventListener('input', saveState);
 
       updateProgress(serverDiv);
       updateTotalProgress();
     }
 
+    /***********************
+     * Cálculo y UI de progreso
+     ***********************/
     function updateProgress(serverDiv) {
       const checkboxes = serverDiv.querySelectorAll('input[type="checkbox"][data-countable="true"]');
       const checked = serverDiv.querySelectorAll('input[type="checkbox"][data-countable="true"]:checked');
@@ -161,6 +206,7 @@
       const progressBar = serverDiv.querySelector('progress');
       progressBar.value = percent;
       setProgressColor(progressBar, percent);
+
       saveState();
     }
 
@@ -173,11 +219,14 @@
       servers.forEach((server, idx) => {
         const name = server.querySelector('h3 input').value || `Servidor ${idx+1}`;
         const percent = parseInt(server.querySelector('.progress-text').textContent) || 0;
-        total += percent; count++;
+        total += percent;
+        count++;
+
         const serverBar = document.createElement('div');
         serverBar.className = 'server-progress';
         const bar = document.createElement('progress');
-        bar.value = percent; bar.max = 100;
+        bar.value = percent;
+        bar.max = 100;
         setProgressColor(bar, percent);
         serverBar.innerHTML = `<p><b>${escapeHtml(name)}</b>: ${percent}%</p>`;
         serverBar.appendChild(bar);
@@ -189,27 +238,6 @@
       const totalBar = document.getElementById('total-progress');
       totalBar.value = avg;
       setProgressColor(totalBar, avg);
-
-      // Actualizar gráficos por app
-      document.querySelectorAll('.app').forEach(appDiv => {
-        const chart = charts.get(appDiv);
-        if (!chart) return;
-        const servers = appDiv.querySelectorAll('.server');
-        const labels = [], data = [], colors = [];
-
-        servers.forEach(server => {
-          const name = server.querySelector('h3 input').value || 'Servidor';
-          const percent = parseInt(server.querySelector('.progress-text').textContent) || 0;
-          labels.push(name);
-          data.push(percent);
-          colors.push(percent >= 80 ? '#2ecc71' : percent >= 50 ? '#f1c40f' : '#e74c3c');
-        });
-
-        chart.data.labels = labels;
-        chart.data.datasets[0].data = data;
-        chart.data.datasets[0].backgroundColor = colors;
-        chart.update();
-      });
     }
 
     function setProgressColor(bar, percent) {
@@ -219,6 +247,9 @@
       else bar.classList.add("high");
     }
 
+    /***********************
+     * Guardar / Cargar
+     ***********************/
     function saveState() {
       const data = [];
       document.querySelectorAll('.app').forEach(app => {
@@ -230,12 +261,14 @@
           appData.servers.push({
             name: server.querySelector('h3 input').value,
             checks: Array.from(server.querySelectorAll('input[type="checkbox"]')).map(c => c.checked),
+            progress: parseInt(server.querySelector('.progress-text').textContent) || 0,
             note: server.querySelector('textarea').value
           });
         });
         data.push(appData);
       });
       localStorage.setItem('planTrabajoDinamico', JSON.stringify(data));
+      updateTotalProgress();
     }
 
     function loadState() {
@@ -256,13 +289,93 @@
           }
         }
         updateTotalProgress();
-      } catch (e) { console.warn('Error al cargar plan', e); }
+      } catch (e) {
+        console.warn('Error al cargar plan desde localStorage', e);
+      }
     }
 
+    /***********************
+     * Exportar data.json
+     ***********************/
+    async function exportData() {
+      const data = [];
+      document.querySelectorAll('.app').forEach(app => {
+        const appData = { name: app.querySelector('h2 input').value, servers: [] };
+        app.querySelectorAll('.server').forEach(server => {
+          appData.servers.push({
+            name: server.querySelector('h3 input').value,
+            checks: Array.from(server.querySelectorAll('input[type="checkbox"]')).map(c => c.checked),
+            progress: parseInt(server.querySelector('.progress-text').textContent) || 0,
+            note: server.querySelector('textarea').value
+          });
+        });
+        data.push(appData);
+      });
+
+      const jsonData = JSON.stringify(data, null, 2);
+
+      if (window.showSaveFilePicker) {
+        try {
+          const storedHandle = await getStoredFileHandle();
+          if (storedHandle) {
+            try {
+              const permission = await storedHandle.queryPermission({ mode: 'readwrite' });
+              if (permission !== 'granted') {
+                const reqPerm = await storedHandle.requestPermission({ mode: 'readwrite' });
+                if (reqPerm !== 'granted') throw new Error('Permiso de escritura denegado');
+              }
+              const writable = await storedHandle.createWritable();
+              await writable.write(jsonData);
+              await writable.close();
+              saveState();
+              alert('✅ data.json sobrescrito correctamente.');
+              return;
+            } catch {}
+          }
+
+          const handle = await window.showSaveFilePicker({
+            suggestedName: 'data.json',
+            types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+          });
+          if (handle) {
+            const writable = await handle.createWritable();
+            await writable.write(jsonData);
+            await writable.close();
+            try { await storeFileHandle(handle); } catch {}
+            saveState();
+            alert('✅ data.json guardado correctamente.');
+            return;
+          }
+        } catch {}
+      }
+
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      saveState();
+      alert('✅ Se descargó data.json (fallback).');
+    }
+
+    /***********************
+     * Helpers
+     ***********************/
     function escapeHtml(str) {
-      return str ? String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])) : '';
+      if (!str && str !== '') return '';
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
     }
 
+    /***********************
+     * Inicio
+     ***********************/
     loadState();
     setTimeout(updateTotalProgress, 200);
   </script>
