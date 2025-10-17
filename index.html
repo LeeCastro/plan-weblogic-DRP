@@ -35,8 +35,8 @@
       margin-top: 15px;
     }
     canvas {
-      width: 160px !important;
-      height: 160px !important;
+      width: 180px !important;
+      height: 180px !important;
     }
     .server {
       text-align: center;
@@ -72,7 +72,7 @@
   </div>
 
   <script>
-    // 🧩 Plugin para texto central en las gráficas
+    // 🧩 Plugin para texto central en las gráficas (más grande y legible)
     const centerTextPlugin = {
       id: 'centerText',
       beforeDraw(chart) {
@@ -81,7 +81,7 @@
         const dataset = chart.data.datasets[0];
         const value = dataset.data[0];
         ctx.save();
-        ctx.font = 'bold 18px Arial';
+        ctx.font = 'bold 28px Arial'; // ← tamaño aumentado
         ctx.fillStyle = '#2c3e50';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -93,7 +93,11 @@
     async function loadData() {
       try {
         const response = await fetch("data.json?nocache=" + new Date().getTime());
-        const apps = await response.json();
+        let apps = await response.json();
+
+        // 📌 Ordenar alfabéticamente por nombre
+        apps.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
         renderApps(apps);
       } catch (e) {
         document.getElementById("apps").innerHTML =
